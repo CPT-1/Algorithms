@@ -1,3 +1,5 @@
+//A program to solve linear circuitry
+
 #pragma once
 
 #include <iostream>
