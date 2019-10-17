@@ -13,11 +13,9 @@ void Graph::InitG()
 		cout << "Error\n";
 		return;
 	}
-	//initial the adjvList
 	adjv = new AdjVList[Nv];
 	for (i = 0; i < Nv; i++)
-		adjv[i].Ver = i;	
-	// the firstedge keeps empty
+		adjv[i].Ver = i;
 	for (i = 0; i < Nv; i++)
 	{
 		adjv[i].firstedge = new ENode;
@@ -33,12 +31,14 @@ void Graph::InsertV()
 {
 
 	int cnt = 0;
-	double U;
+	DataType U;
 	int Ver;
-	//initial the SU
+	//initial Set_U
 	SU = new Set_U[Nv];
 	for (int i = 0; i < Nv; i++)
 		SU[i].isConst = 0;
+	cout << "please enter the amount of Frequence /HZ " << endl;
+	cin >> Frequence;
 	do {
 		cout << "please enter the vertex to add volt\n";
 		cin >> Ver;
@@ -53,25 +53,25 @@ void Graph::InsertV()
 			SU[Ver].U = U;
 		}
 	} while (Ver >= 0 && Ver < Nv);
+	//
 	Unkonwn = Nv - cnt;
-	B = new double[Unkonwn];
+	B = new DataType[Unkonwn];
 	for (int i = 0; i < Nv; i++)
 	{
-		SU[i].Factor = new double[Unkonwn];
+		SU[i].Factor = new DataType[Unkonwn];
 		for (int j = 0; j < Unkonwn; j++)
 			SU[i].Factor[j] = 0;
 	}
-
 	for (int j = 0; j < Unkonwn; j++)
 		B[j] = 0;
 }
 
 void Graph::InsertE()
 {
-	
+	//
 	int i = 0;
 	int cnt = 0;
-	double R;
+	DataType R;
 	int Ver_From, Ver_To;
 	do {
 		cout << "please enter the two vertexes to link\n";
@@ -91,7 +91,7 @@ void Graph::InsertE()
 			E->isConst = 0;
 			E->Ver_From = Ver_From;
 			E->Ver_To = Ver_To;
-			for (pE1; pE1->next; pE1 = pE1->next);//to find the last of the List
+			for (pE1; pE1->next; pE1 = pE1->next);
 			pE1->next = E;
 
 			E = new ENode;
@@ -101,7 +101,7 @@ void Graph::InsertE()
 			E->isConst = 0;
 			E->Ver_From = Ver_From;
 			E->Ver_To = Ver_To;
-			for (pE2; pE2->next; pE2 = pE2->next);//to find the last of the List
+			for (pE2; pE2->next; pE2 = pE2->next);
 			pE2->next = E;
 
 			Ne = Ne + 1;
@@ -115,7 +115,6 @@ void Graph::InsertE()
 
 void Graph::InsertC()
 {
-	int i;
 	int num;
 	double I;
 	int Ver_From, Ver_To;
@@ -137,11 +136,9 @@ void Graph::InsertC()
 			SU[Ver_From].isConst = -1;
 			SU[Ver_To].isConst = -1;
 
-			//to find the edge 
 			for (pE1; pE1->next; pE1 = pE1->next)
 				if (pE1->Ver_To == Ver_To && num == pE1->num)
 					break;
-			//to find the edge 
 			for (pE2; pE2->next; pE2 = pE2->next)
 				if (pE2->Ver_From == Ver_From && num == pE1->num)
 					break;
@@ -165,41 +162,39 @@ void Graph::ShowG()
 	PtrToEdge pE;
 	for (i = 0; i < Nv; i++)
 	{
+		cout << "The frequence of the U and I=" << Frequence << endl;
 		cout << "*******************************\n";
-		printf("The volt of vertex%d is %lf\n"
-			, i, adjv[i].U);
-		printf("The current is from  to\n");
+		cout << "The volt of vertex" << i << " is " << adjv[i].U << endl;
+		cout << "The current is from  to" << endl;
 		for (pE = adjv[i].firstedge->next; pE; pE = pE->next)
-			printf("%d->%d\nR=%lf\nI=%lf\n",pE->Ver_From,pE->Ver_To,pE->R,pE->I);
-			
+		{
+			cout << pE->Ver_From << "->" << pE->Ver_To << endl;
+			cout << "R=" << pE->R << endl;
+			cout << "I=" << pE->I << endl;
+		}
 	}
 	cout << "*******************************\n";
 }
 
-//To figure out the factor of U
+//To figure out the Factor of U
 //To get the linear equation
-//U0[,....,]=[B0]    
-//U1[,....,]=[B1]
-//....       ....
-//Un[,....,]=[Bn]
+//U0[,……,]=[B0]    
+//U1[,……,]=[B1]
+//……	   ……	
 void Graph::Arrange()
 {
 	int i;
 	int cnt = 0;
 	PtrToEdge E;
-	//use Kirchhoff for each vertex 
-	//the amount of I_in(all the unknown) == I_out (all the constant)
-	//I == (U_From-U_To)/R
-	//traverse each vertex
 	for (i = 0; i < Nv; i++)
 	{
 		if (Given == SU[i].isConst)
 			continue;
+		//use Kirchhoff for each vertex the amount of I_in == I_out
+		//I == (U_From-U_To)/R
 		E = adjv[i].firstedge->next;
-		//traverse all the edges of each vertex
 		for (E; E; E = E->next)
 		{
-			
 			if (Given == E->isConst)
 			{
 				if (i == E->Ver_From)
@@ -241,7 +236,6 @@ void Graph::Solve()
 	for (int i = 0; i < Nv; i++)
 		if (Given != SU[i].isConst)
 		{
-			// use Cramer's Rule
 			SU[i].U = _Det.CalculateLinear(B, cnt++);
 			adjv[i].U = SU[i].U;
 		}
