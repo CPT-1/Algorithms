@@ -14,7 +14,7 @@ void Determinant::InitDet(Set_U *SU, int N)
 	}
 	i = 0;
 	n = cnt;
-	Det = new double[n*n];
+	Det = new DataType[n*n];
 	for (int j = 0; j < N; j++)
 		for (int k = 0; k < n; k++)
 		{
@@ -31,15 +31,15 @@ int Determinant::GetN()
 	return n;
 }
 
-double* Determinant::GetD()
+DataType* Determinant::GetD()
 {
 	return Det;
 }
 
 
-double Determinant::DetCalculate(double *Det, int n)
+DataType Determinant::DetCalculate(DataType*Det, int n)
 {
-	double ret = 0;
+	DataType ret = 0;
 	if (n == 2)
 		ret = Det[0] * Det[3] - Det[2] * Det[1];
 	else
@@ -55,10 +55,10 @@ double Determinant::DetCalculate(double *Det, int n)
 }
 
 
-double *Determinant::Division(double *Det, int n, int i)
+DataType*Determinant::Division(DataType*Det, int n, int i)
 {
 	int j, k;
-	double* D = new double[(n - 1)*(n - 1)];
+	DataType* D = new DataType[(n - 1)*(n - 1)];
 	k = 0;
 	for (j = 0; j < (n - 1)*(n - 1); j++)
 	{
@@ -70,12 +70,11 @@ double *Determinant::Division(double *Det, int n, int i)
 	return D;
 }
 
-//Cramer's Rule
 //To solve the linear equation and get the amount of Xi 
-double Determinant::CalculateLinear(double *B,int i)
+DataType Determinant::CalculateLinear(DataType*B,int i)
 {
-	double ret = 0;
-	double *D = new double[n*n];
+	DataType ret = 0;
+	DataType*D = new DataType[n*n];
 	for(int j=0;j<n;j++)
 		for (int k = 0; k < n; k++)
 		{
